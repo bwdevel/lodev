@@ -62,7 +62,7 @@ function love.update(dt)
     -- length of ray from one x or y-side to the next x or y-side
     local deltaDistX = math.sqrt(1 + (rayDirY ^ 2) / (rayDirX ^ 2))
     local deltaDistY = math.sqrt(1 + (rayDirX ^ 2) / (rayDirY ^ 2))
-    local prepWallDist
+    local perpWallDist
 
     -- waht direction to step in x or y-direction (either +1 or -1)
     local stepX
@@ -71,9 +71,49 @@ function love.update(dt)
     local hit = 0 -- was there a wall hit?
     local side -- was a NS or EW wall hit?
 
-    --- continue from here...
-  end
+    -- calculate step and initial sideDist
+    if rayDirX < 0 then
+      stepX = -1
+      sideDistX = (rayPosX - mapX) * deltaDistX
+    else
+      stepX = 1
+      sideDistX = (mapX + 1.0 - rayPosX) * deltaDistX
+    end
 
+    if rayDirY < 0 then
+      stepY = -1
+      sideDistY = (rayPosY - mapY) * deltaDistY
+    else
+      stepY = 1
+      sideDistY = (mapY + 1.0 - rayPosY) * deltaDistY
+    end
+
+    -- perform DDA
+    while hit == 0 do
+      -- jump to next map square, OR in x-direction , OR in y-direction
+      if sideDistX < sideDistY then
+        sideDistX = sideDistX + deltaDistX
+        mapX = mapX + stepX
+        side = 0
+      else
+        sideDistY = sideDistY + deltaDistY
+        mapY = mapY + stepY
+        side = 1
+      end
+      -- Check if ray hit the wall
+      if worldMap[mapX][mapY] > 0 then hit = 1 end
+    end
+
+    -- calculate distance projected on camera direction (oblique distance will give fisheye effect!)
+    if side == 0 then
+      perpWallDist = (mapX - rayPosX + (1 - stepX) / 2) / rayDistX
+    else
+      perpWallDist = (mapY - rayPosY + (1 - stepY) / 2) / rayDistY
+    end
+
+    ---- still porting here....
+
+  end
 end
 
 function love.draw()
