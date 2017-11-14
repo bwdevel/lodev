@@ -39,7 +39,9 @@ function love.load()
   planeX = 0
   planeY = 0.66
 
-  w = 512 - 1
+  w = 512
+  h = 384
+  Stripes = {}
 end
 
 function love.update(dt)
@@ -106,17 +108,51 @@ function love.update(dt)
 
     -- calculate distance projected on camera direction (oblique distance will give fisheye effect!)
     if side == 0 then
-      perpWallDist = (mapX - rayPosX + (1 - stepX) / 2) / rayDistX
+      perpWallDist = (mapX - rayPosX + (1 - stepX) / 2) / rayDirX
     else
-      perpWallDist = (mapY - rayPosY + (1 - stepY) / 2) / rayDistY
+      perpWallDist = (mapY - rayPosY + (1 - stepY) / 2) / rayDirY
     end
 
-    ---- still porting here....
+    -- calculate height of the line to draw on screen
+    local lineHeight = h / perpWallDist
 
+    -- caluclate lowest and highest pixel to fill in current stripe
+    local drawStart = -lineHeight / 2 + h / 2
+    if drawStart < 0 then drawStart = 0 end
+    local drawEnd = lineHeight  / 2 + h / 2
+    if drawEnd >= h then drawEnd = h - 1 end
+
+    -- chose wall color
+    local color = {0, 0, 0}
+
+    if worldMap[mapX][mapY] == 1 then
+      color = {255, 0, 0}
+    elseif worldMap[mapX][mapY] == 2 then
+      color = {0, 255, 0}
+    elseif worldMap[mapX][mapY] == 3 then
+      color = {0, 0, 255}
+    elseif worldMap[mapX][mapY] == 4 then
+      color = {255, 255, 255}
+    else
+      color = {255, 255, 0}
+    end
+
+    -- give x and y  sides different brightness
+    if side == 1 then for c = 1, #color do color[c] = color[c] / 2 end end
+
+    -- draw the pixels of the stripe as vertical line
+    -- format {r, g, b, x, start, x, end}
+    table.insert(Stripes, {color[1], color[2], color[3], x, drawStart, x, drawEnd})
   end
 end
 
 function love.draw()
+  for i = #Stripes,1, -1 do
+    love.graphics.setColor(Stripes[i][1], Stripes[i][2], Stripes[i][3])
+    love.graphics.line(Stripes[i][4], Stripes[i][5], Stripes[i][6], Stripes[i][7])
+    table.remove(Stripes, i)
+  end
+  --Stripes = {}
   debugDraw(debug)
 
 end
@@ -133,7 +169,8 @@ end
 function debugDraw(debug)
   if debug then
     local text = {
-      "FPS: " .. tostring(love.timer.getFPS())
+      "FPS: " .. tostring(love.timer.getFPS()),
+      "Stripes artifacts: " .. tostring(#Stripes)
     }
     local x = 10
     local y = 10
