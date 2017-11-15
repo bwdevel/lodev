@@ -39,9 +39,14 @@ function love.load()
   planeX = 0
   planeY = 0.66
 
-  w = 512
-  h = 384
+  w = love.graphics.getWidth()
+  h = love.graphics.getHeight()
   Stripes = {}
+
+  left = false
+  right = false
+  forward = false
+  back = false
 end
 
 function love.update(dt)
@@ -144,6 +149,43 @@ function love.update(dt)
     -- format {r, g, b, x, start, x, end}
     table.insert(Stripes, {color[1], color[2], color[3], x, drawStart, x, drawEnd})
   end
+  local moveSpeed = dt * 5.0
+  local rotSpeed = dt * 3.0
+  if forward then
+    if worldMap[math.floor(posX + dirX * moveSpeed)][math.floor(posY)] == 0 then
+      posX = posX + dirX * moveSpeed
+    end
+    if worldMap[math.floor(posX)][math.floor(posY + dirY * moveSpeed)] == 0 then
+      posY = posY + dirY * moveSpeed
+    end
+  end
+  if back then
+    if worldMap[math.floor(posX - dirX * moveSpeed)][math.floor(posY)] == 0 then
+      posX = posX - dirX * moveSpeed
+    end
+    if worldMap[math.floor(posX)][math.floor(posY - dirY * moveSpeed)] == 0 then
+      posY = posY - dirY * moveSpeed
+    end
+  end
+  if right then
+    -- both camera direction and camera plane must be rotated
+    local oldDirX = dirX
+    dirX = dirX * math.cos(-rotSpeed) - dirY * math.sin(-rotSpeed)
+    dirY = oldDirX * math.sin(-rotSpeed) + dirY * math.cos(-rotSpeed)
+    local oldPlaneX = planeX
+    planeX = planeX * math.cos(-rotSpeed) - planeY * math.sin(-rotSpeed)
+    planeY = oldPlaneX * math.sin(-rotSpeed) + planeY * math.cos(-rotSpeed)
+  end
+  if left then
+    -- both camera direction and camera plane must be rotated
+    local oldDirX = dirX
+    dirX = dirX * math.cos(rotSpeed) - dirY * math.sin(rotSpeed)
+    dirY = oldDirX * math.sin(rotSpeed) + dirY * math.cos(rotSpeed)
+    local oldPlaneX = planeX
+    planeX = planeX * math.cos(rotSpeed) - planeY * math.sin(rotSpeed)
+    planeY = oldPlaneX * math.sin(rotSpeed) + planeY * math.cos(rotSpeed)
+  end
+
 end
 
 function love.draw()
@@ -158,12 +200,21 @@ function love.draw()
 end
 
 function love.keypressed(key)
+  if key == 'w' then forward = true end
+  if key == 'a' then left = true end
+  if key == 'd' then right = true end
+  if key == 's' then back = true end
 
 end
 
 function love.keyreleased(key)
   if key == 'escape' then love.event.quit() end
   if key == 'p' then if debug then debug = false else debug = true end end
+
+  if key == 'w' then forward = false end
+  if key == 'a' then left = false end
+  if key == 'd' then right = false end
+  if key == 's' then back = false end
 end
 
 function debugDraw(debug)
