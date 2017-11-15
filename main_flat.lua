@@ -1,40 +1,36 @@
---- this version of the main.lua is the textured implementation
+--- this version of the main.lua is the no-texture implementation
 --- of the project
 --- rename to 'main.lua' to use it
 
 function love.load()
   debug = false
-  screenWidth = love.graphics.getWidth()
-  screenHeight = love.graphics.getHeight()
-  texWidth = 64
-  texHeight = 64
   mapWidth = 24
   mapHeight = 24
   worldMap = {
-    {4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,7,7,7,7,7,7,7,7},
-   {4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
-   {4,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
-   {4,0,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7},
-   {4,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0,0,0,0,0,0,7},
-   {4,0,4,0,0,0,0,5,5,5,5,5,5,5,5,5,7,7,0,7,7,7,7,7},
-   {4,0,5,0,0,0,0,5,0,5,0,5,0,5,0,5,7,0,0,0,7,7,7,1},
-   {4,0,6,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
-   {4,0,7,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,7,7,1},
-   {4,0,8,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,0,0,0,8},
-   {4,0,0,0,0,0,0,5,0,0,0,0,0,0,0,5,7,0,0,0,7,7,7,1},
-   {4,0,0,0,0,0,0,5,5,5,5,0,5,5,5,5,7,7,7,7,7,7,7,1},
-   {6,6,6,6,6,6,6,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
-   {8,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,4},
-   {6,6,6,6,6,6,0,6,6,6,6,0,6,6,6,6,6,6,6,6,6,6,6,6},
-   {4,4,4,4,4,4,0,4,4,4,6,0,6,2,2,2,2,2,2,2,3,3,3,3},
-   {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
-   {4,0,0,0,0,0,0,0,0,0,0,0,6,2,0,0,5,0,0,2,0,0,0,2},
-   {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
-   {4,0,6,0,6,0,0,0,0,4,6,0,0,0,0,0,5,0,0,0,0,0,0,2},
-   {4,0,0,5,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,2,0,2,2},
-   {4,0,6,0,6,0,0,0,0,4,6,0,6,2,0,0,5,0,0,2,0,0,0,2},
-   {4,0,0,0,0,0,0,0,0,4,6,0,6,2,0,0,0,0,0,2,0,0,0,2},
-   {4,4,4,4,4,4,4,4,4,4,1,1,1,2,2,2,2,2,2,3,3,3,3,3}
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,2,2,2,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
+    {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,3,0,0,0,3,0,0,0,1},
+    {1,0,0,0,0,0,2,0,0,0,2,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,2,2,0,2,2,0,0,0,0,3,0,3,0,3,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,4,0,0,0,0,5,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,4,0,4,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,4,0,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,4,4,4,4,4,4,4,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+    {1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}
   }
 
   -- X and Y start position
@@ -47,40 +43,6 @@ function love.load()
   planeX = 0
   planeY = 0.66
 
-  buffer = {}
-  texture = {}
-  for x = 0, texWidth - 1 do
-    texture[x] = {}
-    for y = 0, texHeight - 1 do
-      texture[x][y] = 0
-    end
-  end
-
-  for x = 0, texWidth - 1 do
-    for y = 0, texHeight - 1 do
-      --local xorcolor = (x * 256 / texWidth) ^ (y * 256 / texHeight)
-      local xorcolor = bit.bxor(x * 256 / texWidth, y * 256 / texHeight)
-      -- xcolor = x * 256 / texWidth
-      local ycolor = y * 256 / texHeight
-      local xycolor = y * 128 / texHeight + x * 128 / texWidth
-      local boolInt
-      if ( x ~= y and x ~= texWidth - y) then boolInt = 1 else boolInt = 0 end
-      texture[0][texWidth * y + x] = 65536 * 224 * boolInt -- flat red texture with black cross
-      texture[1][texWidth * y + x] = xycolor + 256 * xycolor + 65536 * xycolor -- sloped greyscale
-      texture[2][texWidth * y + x] = 256 * xycolor + 65536 * xycolor -- sloped yellow gradient
-      texture[3][texWidth * y + x] = xorcolor + 256 * xorcolor + 65536 * xorcolor -- xor greyscale
-      texture[4][texWidth * y + x] = 256 * xorcolor -- xor green
-      boolInt = (x % 16 and y % 16)
-      texture[5][texWidth * y + x] = 65536 * 192 * boolInt -- red brick
-      texture[6][texWidth * y + x] = 65536 * ycolor -- red gradient
-      texture[7][texWidth * y + x] = 128 + 256 * 128 + 65536 * 128 -- flat grey texture
-    end
-  end
-  for x = 100, 200 do
-    local thi = texture[5][x]
-    local rgb = getRGB(thi)
-    print(thi, rgb[1], rgb[2], rgb[3] )
-end
   w = love.graphics.getWidth()
   h = love.graphics.getHeight()
   Stripes = {}
@@ -278,33 +240,4 @@ function debugDraw(debug)
       love.graphics.print(text[i], x + 2, y + 2 + (i - 1) * 16)
     end
   end
-end
-
-function getRGB(int24)
-  local t = {}
-  while int24 > 0 do
-    rest = math.fmod(int24, 2)
-    t[#t+1] = rest
-    int24 = (int24 - rest) / 2
-  end
-  local str = {'0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0','0'}
-  for i = #t, 1, -1 do str[i] = tostring(t[i]) end
-  str = table.concat(str)
-
-  return {
-    bin2int(string.reverse(string.sub(str, 17, 24))),
-    bin2int(string.reverse(string.sub(str, 9, 16))),
-    bin2int(string.reverse(string.sub(str, 1, 8)))
-  }
-end
-
-function bin2int(bin)
-  bin = string.reverse(bin)
-  local sum = 0
-
-  for i = 1, string.len(bin) do
-    num = string.sub(bin, i,i) == "1" and 1 or 0
-    sum = sum + num * math.pow(2, i-1)
-  end
-  return sum
 end
