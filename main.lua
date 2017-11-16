@@ -169,6 +169,35 @@ function love.update(dt)
     local drawEnd = lineHeight  / 2 + h / 2
     if drawEnd >= h then drawEnd = h - 1 end
 
+    -- texturing calculations
+    local texNum = worldMap[mapX][mapY] - 1 -- subracted from it so that texture 0 can be used
+
+    -- calculate value of wallX
+    local wallX -- where exactly the wall was hit
+    if side == 0  then
+      wallX = rayPosX + perpWallDist * rayDirY
+    else
+      wallX = rayPosY + perpWallDist * rayDirX
+    end
+    wallX = wallX - math.floor(wallX)
+
+    -- x coordinate on the texture
+    local texX = math.floor wallX * texWidth
+    if side == 0 and rayDirX > 0 then texX = texWidth - texX - 1 end
+    if side == 1 and rayDirY < 0 then texX = texWidth - texX - 1 end
+
+    for y = drawStart, drawEnd - 1 do
+      local d = y * 256 - h * 128 + lineHeight * 128 -- 256 and 128 factors to avoid floats
+      local texY = ((d * texHeight) / lineHeight) / 256
+      local color = texture[texNum][texHeight * texY + texX]
+      -- make color darker for  y-sides: R, G, and B byte each divided through two with a "shift" and an "and"
+      -- if side == 1 then color = (color >> 1 ) & 835571 -- not sure how to do this in lua
+      buffer[y][x] = color
+    end
+
+
+
+--[[]]
     -- chose wall color
     local color = {0, 0, 0}
 
@@ -183,6 +212,7 @@ function love.update(dt)
     else
       color = {255, 255, 0}
     end
+--[[]]
 
     -- give x and y  sides different brightness
     if side == 1 then for c = 1, #color do color[c] = color[c] / 2 end end
